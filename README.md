@@ -8,10 +8,11 @@ sbt-avro is a sbt 1.x plugin for generating Scala classes from Apache Avro schem
 
 ### Installation
 
-Add the plugin to your build, eg in `./project/plugins.sbt` add this line: :
-    ```scala
-        addSbtPlugin("com.iadvize" % "sbt-avro" % "1.0.0-SNAPSHOT")
-    ```
+Add the plugin to your build, eg in `./project/plugins.sbt` add this line:
+
+```scala
+    addSbtPlugin("com.iadvize" % "sbt-avro" % "1.0.0-SNAPSHOT")
+```
 
 ### Download Avro schema files from Schema Registry
 
