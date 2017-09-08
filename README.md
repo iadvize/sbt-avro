@@ -42,14 +42,14 @@ The case classes will get generated in your default src_managed directory (ie:`t
 
 ## Settings
 
-| Name          | Default  | Description  |
-| ------------- |:-------------:| -----:| -----:|
-| schemaRegistryEndpoint | ``localhost:8081`` | Schema Registry endpoint |
-| schemas | all Avro schemas with last version) | (a list of (subject, version) |
-| resourceManagedDirectory | ``$resourceManaged/main/avro`` | Path containing *.avsc files from schema registry. |
-| sourceManagedDirectory | ``$sourceManaged/main/avro`` | Path for the generated *.scala files |
-| resourceDirectory | ``$resource/main/avro`` | Path containing your *.avs files. |
-| templateDirectory | ``internal`` | Path containing the templates. |
+Name | Default | Description
+-----|---------|------------
+schemaRegistryEndpoint | ``localhost:8081`` | Schema Registry endpoint
+schemas | all Avro schemas with last version) | (a list of (subject, version)
+resourceManagedDirectory | ``$resourceManaged/main/avro`` | Path containing *.avsc files from schema registry.
+sourceManagedDirectory | ``$sourceManaged/main/avro`` | Path for the generated *.scala files
+resourceDirectory | ``$resource/main/avro`` | Path containing your *.avs files.
+templateDirectory | ``internal`` | Path containing the templates.
 
 
 ## Tasks
