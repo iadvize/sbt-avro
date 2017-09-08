@@ -1,0 +1,12 @@
+#if ($schema.getNamespace())
+package $schema.getNamespace()
+#end
+#if ($schema.getDoc())
+/** $schema.getDoc() */
+#end
+@org.apache.avro.specific.FixedSize($schema.getFixedSize())
+case class ${this.mangle($schema.getName())}(bytes: Array[Byte])) {
+
+  val Schema = "${this.javaEscape($schema.toString())}"
+
+}

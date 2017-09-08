@@ -1,0 +1,21 @@
+#if ($schema.getNamespace())
+package $schema.getNamespace()
+#end
+
+#if ($schema.getDoc())
+/** $schema.getDoc() */
+#end
+case class ${this.mangle($schema.getName())}(
+#set($newline="
+")
+#foreach ($field in $schema.getFields())
+#if ($field.doc())
+  /** $field.doc() */
+#end
+  ${this.mangle($field.name(), $schema.isError())}: ${this.javaUnbox($field.schema())}#if ($velocityHasNext),$newline#end
+#end
+$newline) {
+
+  val Schema = "${this.javaEscape($schema.toString())}"
+
+}

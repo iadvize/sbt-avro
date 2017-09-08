@@ -1,0 +1,14 @@
+#if ($schema.getNamespace())
+package $schema.getNamespace()
+#end
+
+#if ($schema.getDoc())
+/** $schema.getDoc() */
+#end
+object ${this.mangle($schema.getName())} extends Enumeration {
+
+  val Schema = "${this.javaEscape($schema.toString())}"
+
+  val #foreach ($symbol in ${schema.getEnumSymbols()})${this.mangle($symbol)}#if ($velocityHasNext), #end#end = Value
+
+}
