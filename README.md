@@ -2,7 +2,6 @@
 
 ## Overview
 
-Yet another SBT plugin for Apache Avro.
 sbt-avro is a sbt 1.x plugin for generating Scala classes from Apache Avro schemas hosted on a remote Confluent Schema Registry.
 
 ## Usage
