@@ -6,6 +6,7 @@ package $schema.getNamespace()
 /** $schema.getDoc() */
 #end
 object ${this.mangle($schema.getName())} extends Enumeration {
+  type ${this.mangle($schema.getName())} = Value
 
   val Schema = "${this.javaEscape($schema.toString())}"
 
