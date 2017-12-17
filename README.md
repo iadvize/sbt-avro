@@ -16,12 +16,22 @@ addSbtPlugin("com.iadvize" % "sbt-avro" % "1.0.0-SNAPSHOT")
 
 ### Download Avro schema files from Schema Registry
 
-By default sbt-avro will download all Avro schema files from local schema registry to your default ressources_managed directory (ie: `target/scala-2.12/ressources_managed/main/avro/`). 
+By default sbt-avro will download all Avro schema files from local schema registry to your default resources_managed directory (ie: `target/scala-2.12/resources_managed/main/avro/`). 
 Please check settings section for more information about available settings.
 
 Example:
 ```scala
 sbt avro:download
+```
+
+### Upload Avro schema files to Schema Registry
+
+sbt-avro can upload all Avro Schema files from your resources directory (ie: `src/main/resources/avro`) to a local schema registry.
+Please check settings section for more information about available settings.
+
+Example:
+```scala
+sbt avro:upload
 ```
 
 ### Generate scala classes from Avro schema files
@@ -39,7 +49,6 @@ sbt avro:generate
 ```
 
 The case classes will get generated in your default src_managed directory (ie:`target/scala-2.12/src_managed/main/avro/`).
-
 
 ## Settings
 
@@ -92,4 +101,5 @@ object ${this.mangle($schema.getName())} extends Enumeration {
   
   - [Victor Pirat](https://github.com/atvictor)
   - [Jocelyn Dréan](https://github.com/jocelyndrean)
+  - [Ian Duffy](https://github.com/imduffy15)
   - You -> Submit your PR
