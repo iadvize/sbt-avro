@@ -84,7 +84,7 @@ object AvroPlugin extends AutoPlugin {
     lazy val Avro = config("avro") extend Compile
 
     val download = taskKey[Seq[File]]("Download schemas from the registry.")
-    val upload = taskKey[Unit]("Upload schemas to thee registry")
+    val upload = taskKey[Unit]("Upload schemas to the registry")
     val generate = taskKey[Seq[File]]("Generate Scala classes from schemas.")
 
     val schemaRegistryEndpoint = settingKey[String]("Schema registry endpoint, defaults to http://localhost:8081.")
