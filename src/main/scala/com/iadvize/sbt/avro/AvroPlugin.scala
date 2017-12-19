@@ -12,6 +12,7 @@ import org.apache.avro.compiler.specific.SpecificCompiler
 import scala.collection.JavaConverters._
 import sbt._
 import sbt.Keys._
+import sbt.internal.util.ManagedLogger
 
 import scala.util.Try
 
@@ -83,6 +84,7 @@ object AvroPlugin extends AutoPlugin {
     lazy val Avro = config("avro") extend Compile
 
     val download = taskKey[Seq[File]]("Download schemas from the registry.")
+    val upload = taskKey[Unit]("Upload schemas to the registry")
     val generate = taskKey[Seq[File]]("Generate Scala classes from schemas.")
 
     val schemaRegistryEndpoint = settingKey[String]("Schema registry endpoint, defaults to http://localhost:8081.")
@@ -103,6 +105,7 @@ object AvroPlugin extends AutoPlugin {
     resourceDirectory := (resourceDirectory in Compile).value / directoryName.value,
     sourceManaged := (sourceManaged in Compile).value / directoryName.value,
     download := downloadTask.value,
+    upload := uploadTask.value,
     generate := generateTask.value,
 
     resourceGenerators in Compile += download.taskValue,
@@ -115,6 +118,8 @@ object AvroPlugin extends AutoPlugin {
   )
 
   lazy val downloadTask = Def.task {
+    val logger = streams.value.log
+
     val configuredSchemas = schemas.value
     val configuredResourceManaged = resourceManaged.value
     val configuredSchemaRegistryEndpoint = schemaRegistryEndpoint.value
@@ -125,7 +130,7 @@ object AvroPlugin extends AutoPlugin {
       schemaRegistryClient.getAllSubjects.asScala.map(subject => Schema(subject, Version.Last))
     } else configuredSchemas
 
-    streams.value.log.info("About to download:\n" + schemasToDownload.map(schema => "  " + schema.subject + " " + (if (schema.version == Version.Last) "latest" else "v" + schema.version)).mkString("\n") + "\nfrom " + configuredSchemaRegistryEndpoint)
+    logger.info("About to download:\n" + schemasToDownload.map(schema => "  " + schema.subject + " " + (if (schema.version == Version.Last) "latest" else "v" + schema.version)).mkString("\n") + "\nfrom " + configuredSchemaRegistryEndpoint)
 
     Files.createDirectories(configuredResourceManaged.toPath)
 
@@ -144,20 +149,28 @@ object AvroPlugin extends AutoPlugin {
       .toSeq
   }
 
+  lazy val uploadTask = Def.task {
+    val logger = streams.value.log
+
+    val configuredSchemaRegistryEndpoint = schemaRegistryEndpoint.value
+    val schemaRegistryClient = new CachedSchemaRegistryClient(configuredSchemaRegistryEndpoint, 10000)
+
+    val schemasToRegister = parseSchemas(logger, resourceDirectory.value.toPath)
+
+    schemasToRegister.foreach {
+      case(subject: String, (file: File, schema: avro.Schema)) =>
+        logger.info(s"Calling register $subject ${file.getAbsolutePath}")
+        schemaRegistryClient.register(subject, schema)
+    }
+  }
+
   lazy val generateTask = Def.task {
     val logger = streams.value.log
+
     val configuredSourceManaged = sourceManaged.value
 
-    val parser = new Parser()
-
-    def parseSchemas(path: Path) =
-      if (path.toFile.exists())
-        Files.newDirectoryStream(path, "*.avsc").iterator().asScala.flatMap { schemaPath =>
-          Try(parser.parse(schemaPath.toFile)).fold(throwable => { logger.error(s"Can't parse schema $schemaPath, got error: ${throwable.getMessage}"); None}, schema => Some(schema.getName -> (schemaPath.toFile, schema)))
-        }.toMap
-      else Map.empty[String, (File, avro.Schema)]
-
-    val schemasToGenerate = parseSchemas(resourceManaged.value.toPath) ++ parseSchemas(resourceDirectory.value.toPath)
+    val schemasToGenerate = parseSchemas(logger, resourceManaged.value.toPath) ++
+      parseSchemas(logger, resourceDirectory.value.toPath)
 
     Files.createDirectories(configuredSourceManaged.toPath)
 
@@ -167,6 +180,17 @@ object AvroPlugin extends AutoPlugin {
       compiler.setTemplateDir(classPathTemplatesDirectory.value)
       compiler.compileToDestinationWithResult(schemaFile, configuredSourceManaged).toSeq
     }.toSeq
+  }
+
+  private def parseSchemas(logger: ManagedLogger, path: Path) = {
+    val parser = new Parser()
+    if (path.toFile.exists())
+      Files.newDirectoryStream(path, "*.avsc").iterator().asScala.flatMap { schemaPath =>
+        Try(parser.parse(schemaPath.toFile)).fold(throwable => {
+          logger.error(s"Can't parse schema $schemaPath, got error: ${throwable.getMessage}"); None
+        }, schema => Some(schema.getName -> (schemaPath.toFile, schema)))
+      }.toMap
+    else Map.empty[String, (File, avro.Schema)]
   }
 
   override def requires = sbt.plugins.JvmPlugin

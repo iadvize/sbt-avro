@@ -1,0 +1,11 @@
+{
+  "namespace": "simple",
+  "type": "record",
+  "name": "User",
+  "fields": [
+    {
+      "name": "name",
+      "type": "string"
+    }
+  ]
+}
