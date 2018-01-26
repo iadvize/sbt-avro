@@ -4,9 +4,7 @@ sbt-avro is a sbt 1.x plugin for generating Scala classes from Apache Avro schem
 
 ## Examples
 
-## Documentation
-
-### Installation
+## Install
 
 Add the plugin to your build, eg in `./project/plugins.sbt` add this line:
 
@@ -14,7 +12,7 @@ Add the plugin to your build, eg in `./project/plugins.sbt` add this line:
 addSbtPlugin("com.iadvize" % "sbt-avro" % "1.0.0-SNAPSHOT")
 ```
 
-#### Download Avro schema files from Schema Registry
+### Download Avro schema files from Schema Registry
 
 By default sbt-avro will download all Avro schema files from local schema registry to your default resources_managed directory (ie: `target/scala-2.12/resources_managed/main/avro/`).
 Please check settings section for more information about available settings.
@@ -24,7 +22,7 @@ Example:
 sbt avro:download
 ```
 
-#### Upload Avro schema files to Schema Registry
+### Upload Avro schema files to Schema Registry
 
 sbt-avro can upload all Avro Schema files from your resources directory (ie: `src/main/resources/avro`) to a local schema registry.
 Please check settings section for more information about available settings.
@@ -34,7 +32,7 @@ Example:
 sbt avro:upload
 ```
 
-#### Generate scala classes from Avro schema files
+### Generate scala classes from Avro schema files
 
 The plugin sbt-avro will look for `*.avsc` files in :
 - Ressources folder (ie: `src/main/resources/avro/`)
@@ -49,6 +47,8 @@ sbt avro:generate
 ```
 
 The case classes will get generated in your default src_managed directory (ie:`target/scala-2.12/src_managed/main/avro/`).
+
+## Documentation
 
 ### Settings
 
