@@ -1,10 +1,8 @@
 # sbt-avro
 
-## Overview
-
 sbt-avro is a sbt 1.x plugin for generating Scala classes from Apache Avro schemas hosted on a remote Confluent Schema Registry.
 
-## Usage
+## Documentation
 
 ### Installation
 
@@ -14,9 +12,9 @@ Add the plugin to your build, eg in `./project/plugins.sbt` add this line:
 addSbtPlugin("com.iadvize" % "sbt-avro" % "1.0.0-SNAPSHOT")
 ```
 
-### Download Avro schema files from Schema Registry
+#### Download Avro schema files from Schema Registry
 
-By default sbt-avro will download all Avro schema files from local schema registry to your default resources_managed directory (ie: `target/scala-2.12/resources_managed/main/avro/`). 
+By default sbt-avro will download all Avro schema files from local schema registry to your default resources_managed directory (ie: `target/scala-2.12/resources_managed/main/avro/`).
 Please check settings section for more information about available settings.
 
 Example:
@@ -24,7 +22,7 @@ Example:
 sbt avro:download
 ```
 
-### Upload Avro schema files to Schema Registry
+#### Upload Avro schema files to Schema Registry
 
 sbt-avro can upload all Avro Schema files from your resources directory (ie: `src/main/resources/avro`) to a local schema registry.
 Please check settings section for more information about available settings.
@@ -34,7 +32,7 @@ Example:
 sbt avro:upload
 ```
 
-### Generate scala classes from Avro schema files
+#### Generate scala classes from Avro schema files
 
 The plugin sbt-avro will look for `*.avsc` files in :
 - Ressources folder (ie: `src/main/resources/avro/`)
@@ -50,7 +48,7 @@ sbt avro:generate
 
 The case classes will get generated in your default src_managed directory (ie:`target/scala-2.12/src_managed/main/avro/`).
 
-## Settings
+### Settings
 
 Name | Default | Description
 -----|---------|------------
@@ -62,17 +60,18 @@ resourceDirectory | ``$resource/main/avro`` | Path containing your *.avs files.
 templateDirectory | ``internal`` | Path containing the templates.
 
 
-## Tasks
+#### Tasks
 
 Task                                    | Description
 ----------------------------------------|----------------------------------------
 download                                | Download Avro schemas from a Schema Registry
 generate                                | Generate case classes from avro files
 
-Important: `sbt:compile` task will only call avro:generate and not call download task.  
+Important: `sbt:compile` task will only call avro:generate and not call download task.
 
-## Custom Templates
-You can use your custom templates to generate scala source from Avro schema. 
+#### Custom Templates
+
+You can use your custom templates to generate scala source from Avro schema.
 If you want to use custom templates, please add your custom templates into `$templateDirectory` folder.
 Template example:
 ```velocity
@@ -93,13 +92,12 @@ object ${this.mangle($schema.getName())} extends Enumeration {
 
 ```
 
-## Development
+## Contribute
 
-### Testing
+Look at contribution guidelines here : [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ### Contributors
-  
-  - [Victor Pirat](https://github.com/atvictor)
-  - [Jocelyn Dréan](https://github.com/jocelyndrean)
-  - [Ian Duffy](https://github.com/imduffy15)
-  - You -> Submit your PR
+
+- [Victor Pirat](https://github.com/atvictor)
+- [Jocelyn Dréan](https://github.com/jocelyndrean)
+- [Ian Duffy](https://github.com/imduffy15)
