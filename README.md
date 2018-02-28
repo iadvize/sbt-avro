@@ -66,7 +66,7 @@ The case classes will get generated in your default src_managed directory (ie:`t
 Name | Default | Description
 -----|---------|------------
 schemaRegistryEndpoint | ``localhost:8081`` | Schema Registry endpoint
-schemas | All Avro schemas with last version) | A list of (subject, version)
+schemas | All Avro schemas (with last version) | A list of (subject, version)
 resourceManagedDirectory | ``$resourceManaged/main/avro`` | Path containing *.avsc files from schema registry.
 sourceManagedDirectory | ``$sourceManaged/main/avro`` | Path for the generated *.scala files
 resourceDirectory | ``$resource/main/avro`` | Path containing your *.avs files.
