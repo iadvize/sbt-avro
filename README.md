@@ -3,6 +3,17 @@
 sbt-avro is a sbt 1.x plugin for generating Scala classes from Apache Avro schemas hosted on a remote Confluent Schema Registry.
 
 ## Examples
+Example of build.sbt file:
+```scala
+
+    schemaRegistryEndpoint in Avro := "http://0.0.0.0:8081",
+    schemas in Avro ++= Seq(
+        Schema("cc_payments-value", Version(1)),
+        Schema("telecom_italia_data-value", Version(3)),
+        Schema("nyc_yellow_taxi_trip_data-value", Version(1))
+    )
+
+```
 
 ## Install
 
@@ -35,10 +46,10 @@ sbt avro:upload
 ### Generate scala classes from Avro schema files
 
 The plugin sbt-avro will look for `*.avsc` files in :
-- Ressources folder (ie: `src/main/resources/avro/`)
-- Ressources Managed folder (ie: `target/scala-2.12/ressources_managed/main/avro/`)
+- Resources folder (ie: `src/main/resources/avro/`)
+- Resources Managed folder (ie: `target/scala-2.12/resources_managed/main/avro/`)
 
-Important : If a duplicate avro schema (same name ) is detected in your ressources folder and in your ressources_managed folder, the compiler will compile only the schema in ressources folder. So, for example, in dev if you want to try some local changes, you can duplicate your schema from your ressources managed folder into your ressources folder and compile your changes.
+Important : If a duplicate avro schema (same name ) is detected in your resources folder and in your resources_managed folder, the compiler will compile only the schema in resources folder. So, for example, in dev if you want to try some local changes, you can duplicate your schema from your resources managed folder into your resources folder and compile your changes.
 
 So put your schema files there and run:
 
@@ -55,7 +66,7 @@ The case classes will get generated in your default src_managed directory (ie:`t
 Name | Default | Description
 -----|---------|------------
 schemaRegistryEndpoint | ``localhost:8081`` | Schema Registry endpoint
-schemas | All Avro schemas with last version) | A list of (subject, version)
+schemas | All Avro schemas (with last version) | A list of (subject, version)
 resourceManagedDirectory | ``$resourceManaged/main/avro`` | Path containing *.avsc files from schema registry.
 sourceManagedDirectory | ``$sourceManaged/main/avro`` | Path for the generated *.scala files
 resourceDirectory | ``$resource/main/avro`` | Path containing your *.avs files.
