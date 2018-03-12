@@ -86,6 +86,7 @@ object AvroPlugin extends AutoPlugin {
     val download = taskKey[Seq[File]]("Download schemas from the registry.")
     val upload = taskKey[Unit]("Upload schemas to the registry")
     val generate = taskKey[Seq[File]]("Generate Scala classes from schemas.")
+    val compatibility = taskKey[Unit]("Test compatibility of schemas against their latest versions in the registry.")
 
     val schemaRegistryEndpoint = settingKey[String]("Schema registry endpoint, defaults to http://localhost:8081.")
     val schemas = settingKey[Seq[Schema]]("List of schemas to download, an empty list will download latest version of all schemas, defaults to an empty list.")
@@ -107,6 +108,7 @@ object AvroPlugin extends AutoPlugin {
     download := downloadTask.value,
     upload := uploadTask.value,
     generate := generateTask.value,
+    compatibility := compatibilityTask.value,
 
     resourceGenerators in Compile += download.taskValue,
     managedResourceDirectories in Compile += (resourceManaged in Avro).value,
@@ -162,6 +164,32 @@ object AvroPlugin extends AutoPlugin {
         logger.info(s"Calling register $subject ${file.getAbsolutePath}")
         schemaRegistryClient.register(subject, schema)
     }
+  }
+
+  lazy val compatibilityTask = Def.task {
+    val logger = streams.value.log
+
+    val configuredSchemaRegistryEndpoint = schemaRegistryEndpoint.value
+    val schemaRegistryClient = new CachedSchemaRegistryClient(configuredSchemaRegistryEndpoint, 10000)
+
+    val schemasToTestForCompatibility = parseSchemas(logger, resourceManaged.value.toPath) ++
+      parseSchemas(logger, resourceDirectory.value.toPath)
+
+    val results = schemasToTestForCompatibility.map {
+      case(subject: String, (file: File, schema: avro.Schema)) =>
+        logger.info(s"Testing compatibility of $subject ${file.getAbsolutePath}")
+        val isCompatible = schemaRegistryClient.testCompatibility(subject, schema)
+        if (isCompatible) {
+          logger.info(s"${file.getAbsolutePath} is compatible with the latest version of $subject")
+          Some(())
+        } else {
+          logger.error(s"${file.getAbsolutePath} is not compatible with the latest version of $subject")
+          None
+        }
+    }
+
+    if(results.exists(_.isEmpty))
+      sys.error("One or more schemas are incompatible with their latest versions in the schema registry")
   }
 
   lazy val generateTask = Def.task {
