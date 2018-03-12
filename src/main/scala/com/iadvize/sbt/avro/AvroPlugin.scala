@@ -175,20 +175,20 @@ object AvroPlugin extends AutoPlugin {
     val schemasToTestForCompatibility = parseSchemas(logger, resourceManaged.value.toPath) ++
       parseSchemas(logger, resourceDirectory.value.toPath)
 
-    val results = schemasToTestForCompatibility.map {
-      case(subject: String, (file: File, schema: avro.Schema)) =>
+    val successful = schemasToTestForCompatibility.foldLeft(true) {
+      case (acc: Boolean, (subject: String, (file: File, schema: avro.Schema))) =>
         logger.info(s"Testing compatibility of $subject ${file.getAbsolutePath}")
         val isCompatible = schemaRegistryClient.testCompatibility(subject, schema)
         if (isCompatible) {
           logger.info(s"${file.getAbsolutePath} is compatible with the latest version of $subject")
-          Some(())
+          acc
         } else {
           logger.error(s"${file.getAbsolutePath} is not compatible with the latest version of $subject")
-          None
+          false
         }
     }
 
-    if(results.exists(_.isEmpty))
+    if(!successful)
       sys.error("One or more schemas are incompatible with their latest versions in the schema registry")
   }
 
