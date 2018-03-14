@@ -3,3 +3,7 @@
 > avro:generate
 $ exists target/scala-2.12/resource_managed/main/avro/User.avsc
 $ exists target/scala-2.12/src_managed/main/avro/simple/User.scala
+> avro:compatibility
+$ delete src/main/resources/avro/test.avsc
+$ copy-file src/main/resources/test-incompatible.avsc src/main/resources/avro/test-incompatible.avsc
+-> avro:compatibility

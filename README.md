@@ -43,6 +43,20 @@ Example:
 sbt avro:upload
 ```
 
+### Test compatibility of schemas with their latest versions in Schema Registry
+
+sbt-avro can test schemas for compatibility against the latest version of a subject's schema. This makes use of the 
+Schema Registry [compatibility](https://docs.confluent.io/current/schema-registry/docs/api.html#id1) resource.
+
+The plugin will look for `*.avsc` files in :
+- Resources folder (ie: `src/main/resources/avro/`)
+- Resources Managed folder (ie: `target/scala-2.12/resources_managed/main/avro/`)
+
+Example:
+```scala
+sbt avro:compatibility
+```
+
 ### Generate scala classes from Avro schema files
 
 The plugin sbt-avro will look for `*.avsc` files in :
@@ -79,6 +93,8 @@ Task                                    | Description
 ----------------------------------------|----------------------------------------
 download                                | Download Avro schemas from a Schema Registry
 generate                                | Generate case classes from avro files
+upload                                  | Upload Avro schemas to a Schema Registry
+compatibility                           | Test compatibility of Avro schemas against their latest versions in a Schema Registry
 
 Important: `sbt:compile` task will only call avro:generate and not call download task.
 
